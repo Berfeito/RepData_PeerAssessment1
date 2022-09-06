@@ -37,12 +37,15 @@ hist <- ggplot(sum_steps, aes(total_steps)) + geom_histogram(binwidth = 2000) +
         labs(y = "Frquency", x = "Total steps per day")
 
 hist
+```
 
-mean_sum_steps <- mean(sum_steps$total_steps)
+```{r, echo = TRUE, results='hide', warning=FALSE}
+
+mean_sum_steps <- round(mean(sum_steps$total_steps))
 median_sum_steps <- median(sum_steps$total_steps)
 ```
 
-**After analysis, the mean of the number of steps taken is `r mean_sum_steps` and the median is `r median_sum_steps`**
+**After analysis, the mean of the number of steps taken is `r format(mean_sum_steps, scientific=FALSE)` and the median is `r format(median_sum_steps, scientific=FALSE)`**
 
 For this next step, a time series plot of the 5-minute interval will help verify which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps
 
@@ -57,7 +60,7 @@ interval_row <- which.max(steps_interval$steps)
 max_interval <- steps_interval[interval_row,1]
 ```
 
-**On average, across all the days, the 5-minute interval #`r max_interval` contains the maximum number of steps.**
+**On average, across all the days, the 5-minute interval `r max_interval` contains the maximum number of steps.**
 
 # Third part
 
