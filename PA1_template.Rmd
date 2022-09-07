@@ -7,7 +7,7 @@ output:
                 code_folding: show
 ---
 
-```{r global_options}
+```{r global_options, echo = FALSE}
 knitr::opts_chunk$set(fig.path='Figs/')
 ```
 
@@ -26,7 +26,7 @@ activity <- read_csv("activity.zip")
 
 # Second part
 
-For this part missing values are being ignored in order to build a histogram of the total number of steps taken each day and the calculation of mean and median total number of steps taken per day.
+For this part, missing values are being ignored in order to build a histogram of the total number of steps taken each day and the calculation of mean and median total number of steps taken per day.
 
 ```{r, echo = TRUE, results='hide', warning=FALSE, message=FALSE}
 library(dplyr)
@@ -35,8 +35,9 @@ library(ggplot2)
 library(scales)
 
 sum_steps <- activity %>% group_by(date) %>% summarize(total_steps = sum(steps, na.rm = TRUE))
+```
 
-sum_steps
+```{r, echo = TRUE, warning=FALSE, message=FALSE}
 
 hist <- ggplot(sum_steps, aes(total_steps)) + geom_histogram(binwidth = 2000) +
         labs(y = "Frquency", x = "Total steps per day")
@@ -52,15 +53,20 @@ median_sum_steps <- median(sum_steps$total_steps)
 
 **After analysis, the mean of the number of steps taken is `r format(mean_sum_steps, scientific=FALSE)` and the median is `r format(median_sum_steps, scientific=FALSE)`**
 
+
+
 For this next step, a time series plot of the 5-minute interval will help verify which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps
 
 ```{r, echo = TRUE, results='hide', warning=FALSE, message=FALSE}
 steps_interval <- activity %>% group_by(interval) %>% summarize(steps = mean(steps, na.rm = TRUE))
+```
 
-
+```{r, echo = TRUE, warning=FALSE, message=FALSE}
 ggplot(steps_interval, aes(interval, steps)) + geom_line() +
         labs(x= "Intervals (5 minutes)", y = "Mean daily steps")
-        
+```
+
+```{r, echo = TRUE, results='hide', warning=FALSE, message=FALSE}
 interval_row <- which.max(steps_interval$steps)
 max_interval <- steps_interval[interval_row,1]
 ```
@@ -80,6 +86,8 @@ nas <- length(which(is.na(activity$steps)))
 **The variable "steps" is the only one with NA values. They total `r nas`**
 
 
+
+
 A new dataset, equal to the original dataset but with the missing data filled in will be created and a histogram of the total number of steps taken each day prepared for vizualization.
 
 ```{r, echo = TRUE, results='hide', warning=FALSE, message=FALSE}
@@ -88,10 +96,14 @@ library(tidyr)
 nona <- activity %>% mutate(steps = replace_na(steps,mean(steps, na.rm = TRUE)))
 
 sum_steps_nona <- nona %>% group_by(date) %>% summarize(daily_steps = sum(steps))
+```
 
+```{r, echo = TRUE, warning=FALSE, message=FALSE}
 hist_nona <- ggplot(sum_steps_nona, aes(daily_steps)) +
         geom_histogram(binwidth = 2000) +
         labs(x = "Total steps per day")
+
+hist_nona
 ```
 
 
@@ -104,11 +116,11 @@ median_steps_nona <- median(sum_steps_nona$daily_steps)
 
 df <- data.frame(mean_sum_steps, mean_steps_nona, median_sum_steps, median_steps_nona)
 
-mean_diff <- mean_steps_nona - mean_sum_steps
-median_diff <- median_steps_nona - median_sum_steps
+mean_diff <- round(mean_steps_nona - mean_sum_steps)
+median_diff <- round(median_steps_nona - median_sum_steps)
 ```
 
-The mean difference between the data without and with NA is `r mean_diff` and the median difference is `r median_diff`. The impact of inputting the missing data is acceptable.
+**The mean difference between the data without and with NA is `r format(mean_diff, scientific=FALSE)` and the median difference is `r format(median_diff, scientific=FALSE)`. The impact of inputting the missing data is acceptable.**
 
 # Fourth part
 
@@ -127,7 +139,9 @@ plot_weekdays <- nona %>% mutate(days = weekdays(date),
                                       weekday = as.factor(weekday)) %>%
         group_by(weekday, interval) %>%
         summarize(mean(steps))
+```
 
+```{r, echo = TRUE, warning=FALSE, message=FALSE}
 ggplot(plot_weekdays, aes(interval, plot_weekdays$`mean(steps)`)) + geom_line() + 
         facet_wrap(~weekday, nrow = 2) +
         labs(x= "Intervals (5 minutes)", y = "Mean daily steps")

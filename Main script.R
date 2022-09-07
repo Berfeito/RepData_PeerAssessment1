@@ -85,8 +85,8 @@ hist_nona <- ggplot(sum_steps_nona, aes(daily_steps)) +
         labs(x = "Total steps per day")
 
 
-mean_steps_nona <- mean(sum_steps_nona$daily_steps)
-median_steps_nona <- median(sum_steps_nona$daily_steps)
+mean_steps_nona <- round(mean(sum_steps_nona$daily_steps))
+median_steps_nona <- round(median(sum_steps_nona$daily_steps))
 
 df <- data.frame(mean_sum_steps, mean_steps_nona, median_sum_steps, median_steps_nona)
 
